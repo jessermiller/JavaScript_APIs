@@ -8,24 +8,24 @@ let img = document.querySelector("img");
 // Exercise 1 Section
 console.log("EXERCISE 1:\n==========\n");
 
-formSearch.addEventListener("submit", (event)=> {
-    event.preventDefault()
-    getGif()
-})
-function getGif() {
-    fetch(`https://api.giphy.com/v1/gifs/translate?api_key=${API_KEY}&s=${searchWord.value}`)
-    .then((res) => {
-       return res.json();
-    })
-    .then((body) => {
-        console.log(body);
-        img.src = body.data.images.original.url;
-        if (body.data.user && body.data.user.username){ img.alt = `${body.data.title} by ${body.data.user.username}`;
-        img.title = `${body.data.title} by ${body.data.user.username}`;
-    }
-    
-    })
-    .catch((err) => {
-        console.error(err);
-    })
+formSearch.addEventListener("submit", getGif);
+
+
+ function getGif(event) {
+    event.preventDefault();
+     fetch(`https://api.giphy.com/v1/gifs/translate?api_key=${API_KEY}&s=${searchWord.value}`)
+     .then((res) => res.json())
+     .then(updateDom)
+     .catch(errHandler);
+ }
+function updateDom(result) {
+    img.src = result.data.images.original.url;
+    img.alt = result.data.title;
+    img.title = result.data.title;
+}
+
+
+function errHandler(err) {
+    console.error(err);
+    document.querySelector("p").textContent = "Failed to fetch gif. Try again later"
 }
